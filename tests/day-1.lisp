@@ -11,9 +11,22 @@
 
 (fiveam:test day-1.1-example
   (let ((lines (uiop:read-file-lines "input/day-1/example.txt")))
-    (fiveam:is (=  (length (day-1:part-1 lines)) 4))))
+    (fiveam:is (= (day-1:part-1 lines) 11))))
 
 
 (fiveam:test day-1.1-real
   (let ((lines (uiop:read-file-lines "input/day-1/real.txt")))
-    (fiveam:is (=  (length (day-1:part-1 lines)) 4))))
+    (format t "~&---> ~A <---~%" (day-1:part-1 lines))
+    ;;(fiveam:is (= (day-1:part-1 lines) 4))
+    ))
+
+(fiveam:test day-1.2-example
+  (let ((lines (uiop:read-file-lines "input/day-1/example.txt")))
+    (fiveam:is (= (day-1:part-2 lines) 31))))
+
+
+(fiveam:test day-1.2-real
+  (let ((lines (uiop:read-file-lines "input/day-1/real.txt")))
+    (format t "~&---> ~A <---~%" (day-1:part-2 lines))
+    ;;(fiveam:is (= (day-1:part-1 lines) 4))
+    ))
