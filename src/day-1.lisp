@@ -1,32 +1,24 @@
 (defpackage :day-1
-  (:use :cl)
+  (:use :cl :april :utils)
   (:export :part-1 :part-2))
 
 (in-package :day-1)
 
 (defun part-1 (input)
-  (let ((list1  (loop for line in input collect
-                                        (let* ((parts (uiop:split-string line))
-                                               (a (parse-integer (first parts))))
-                                          a)))
-        (list2  (loop for line in input collect
-                                        (let* ((parts (uiop:split-string line))
-                                               (a (parse-integer (second parts))))
-                                          a))))
-    (let ((sorted-list1 (sort list1 #'<))
-          (sorted-list2 (sort list2 #'<)))
-      (loop for i from 0 to (1- (length sorted-list1))
-            summing (abs  (-  (nth i sorted-list2) (nth i sorted-list1)))))))
+  (april-f (with (:state :in ((x input))))
+           ;; +/| absolute value of argument, then reduce with sum
+           ;; (1⌷⍉)(...)(2⌷⍉) do the middle with the first and second columns as
+           ;;   args
+           ;; (-⍥((⊂⍋)⌷⊣)) dyadically: sort both args then subtract
+           "+/|((1⌷⍉)(-⍥((⊂⍋)⌷⊣))(2⌷⍉))x"))
 
 (defun part-2 (input)
-  (let ((list1  (loop for line in input collect
-                                        (let* ((parts (uiop:split-string line))
-                                               (a (parse-integer (first parts))))
-                                          a)))
-        (list2  (loop for line in input collect
-                                        (let* ((parts (uiop:split-string line))
-                                               (a (parse-integer (second parts))))
-                                          a))))
-    (loop for i from 0 to (1- (length list1)) summing
-                                              (let ((appearances (count (nth i list1) list2)))
-                                                (*  (nth i list1) appearances)))))
+  (april-f (with (:state :in ((x input))))
+           ;; +/ sum of
+           ;; ((1⌷⍉)×(f))x first column of x times f of x
+           ;; +/∘↑ sum after mixing
+           ;; (1⌷⍉)((⊃=)⍥⊂)(⊂2⌷⍉)
+           ;;   - take first column and second column; enclose second column.
+           ;;   - Enclose both, then find where column 2 = column 1. Massage
+           ;;   - shape back into matrix.
+           "+/((1⌷⍉)×(+/∘↑((1⌷⍉)((⊃=)⍥⊂)(⊂2⌷⍉))))x"))
