@@ -1,7 +1,9 @@
 (defpackage :utils
   (:use :cl :april)
   (:export
-   :aoc/read-input-list :aoc/read-input-array
+   :aoc/read-input
+   :aoc/read-input-list
+   :aoc/read-input-array
    :aoc/read-int-array-of-arrays
    :aoc/read-int-list-of-lists
    :aoc/read-int-array))
@@ -14,6 +16,9 @@
                        ((eq mode :real) "real.txt")))
        (input-path (format nil "~~/common-lisp/aoc-2024/tests/input/day-~A/~A" day filename)))
     input-path))
+
+(defun aoc/read-input (day mode)
+  (uiop:read-file-string (get-input-path day mode)))
 
 (defun aoc/read-input-list (day mode)
   (uiop:read-file-lines (get-input-path day mode)))
