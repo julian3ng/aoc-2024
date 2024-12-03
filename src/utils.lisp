@@ -2,6 +2,8 @@
   (:use :cl :april)
   (:export
    :aoc/read-input-list :aoc/read-input-array
+   :aoc/read-int-array-of-arrays
+   :aoc/read-int-list-of-lists
    :aoc/read-int-array))
 
 (in-package :utils)
@@ -22,12 +24,23 @@
      (mapcar #'parse-integer (uiop:split-string l)))
    lines))
 
+(defun aoc/read-int-list-of-lists (day mode)
+  (aoc/split-and-read-ints (aoc/read-input-list day mode)))
+
 (defun aoc/read-input-array (day mode)
   (let* ((lines (aoc/read-input-list day mode))
          (arr (make-array
-               (list (length lines) (length (first lines)))
+               (length lines)
                :initial-contents lines)))
     arr))
+
+(defun aoc/read-int-array-of-arrays (day mode)
+  (let ((ints (aoc/split-and-read-ints
+               (aoc/read-input-list day mode))))
+    (make-array (length ints)
+                :initial-contents (mapcar
+                                   (lambda (row) (make-array (length row) :initial-contents row))
+                                   ints))))
 
 (defun aoc/read-int-array (day mode)
   (let ((ints (aoc/split-and-read-ints (aoc/read-input-list day mode))))
