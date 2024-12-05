@@ -5,7 +5,8 @@
   :components ((:file "src/utils")
                (:file "src/day-1")
                (:file "src/day-2")
-               (:file "src/day-3"))
+               (:file "src/day-3")
+               (:file "src/day-4"))
   :in-order-to ((test-op (test-op "aoc-2024/tests"))))
 
 (defsystem "aoc-2024/tests"
@@ -16,6 +17,7 @@
                (:file "tests/main")
                (:file "tests/day-1")
                (:file "tests/day-2")
-               (:file "tests/day-3"))
+               (:file "tests/day-3")
+               (:file "tests/day-4"))
   :perform (test-op (op c) (symbol-call :fiveam :run!
                                         (find-symbol* :all-tests :tests))))

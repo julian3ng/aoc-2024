@@ -6,7 +6,8 @@
    :aoc/read-input-array
    :aoc/read-int-array-of-arrays
    :aoc/read-int-list-of-lists
-   :aoc/read-int-array))
+   :aoc/read-int-array
+   :aoc/read-matrix))
 
 (in-package :utils)
 
@@ -52,3 +53,7 @@
     (make-array (list (length ints) (length (first ints)))
                 :initial-contents ints)
     ))
+
+(defun aoc/read-matrix (day mode)
+  (let ((input (aoc/read-input-list day mode)))
+    (make-array (list (length input) (length (first input))) :initial-contents input)))
