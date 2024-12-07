@@ -1,5 +1,5 @@
 (defpackage :utils
-  (:use :cl :april)
+  (:use :cl :april :ppcre)
   (:export
    :aoc/read-input
    :aoc/read-input-list
@@ -9,7 +9,8 @@
    :aoc/read-int-array
    :aoc/read-matrix
    :april/x
-   :april-f/x))
+   :april-f/x
+   :aoc/read-ints-ignoring-rest))
 
 (in-package :utils)
 
@@ -71,3 +72,11 @@
     `(let ((,x ,input)) 
        (april-f (with (:state :in ((x ,x))))
                 ,@body))))
+
+(defun aoc/read-ints-ignoring-rest (day mode)
+  (let ((input (aoc/read-input-list day mode)))
+    (loop for line in input
+          collecting
+          (mapcar #'parse-integer (ppcre:all-matches-as-strings "\\d+" line)))))
+
+
