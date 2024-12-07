@@ -7,7 +7,9 @@
    :aoc/read-int-array-of-arrays
    :aoc/read-int-list-of-lists
    :aoc/read-int-array
-   :aoc/read-matrix))
+   :aoc/read-matrix
+   :april/x
+   :april-f/x))
 
 (in-package :utils)
 
@@ -57,3 +59,15 @@
 (defun aoc/read-matrix (day mode)
   (let ((input (aoc/read-input-list day mode)))
     (make-array (list (length input) (length (first input))) :initial-contents input)))
+
+(defmacro april/x (input &body body)
+  (let ((x (gensym)))
+    `(let ((,x ,input)) 
+       (april (with (:state :in ((x ,x))))
+              ,@body))))
+
+(defmacro april-f/x (input &body body)
+  (let ((x (gensym)))
+    `(let ((,x ,input)) 
+       (april-f (with (:state :in ((x ,x))))
+                ,@body))))

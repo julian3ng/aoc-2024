@@ -5,7 +5,7 @@
 (in-package :day-5-tests)
 
 (def-suite test-day-5
-  :description "Day 2 tests"
+  :description "Day 5 tests"
   :in tests:all-tests)
 
 (in-suite test-day-5)
