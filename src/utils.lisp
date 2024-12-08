@@ -11,8 +11,8 @@
    :april/x
    :april-f/x
    :aoc/read-ints-ignoring-rest
-   ;;   :april/let
-   ;; :april-f/let
+   :april/let
+   :april-f/let
    ))
 
 (in-package :utils)
@@ -81,13 +81,10 @@
           collecting
           (mapcar #'parse-integer (ppcre:all-matches-as-strings "\\d+" line)))))
 
+(defmacro april/let (bindings &body body)
+  `(april (with (:state :in (,@bindings)))
+          ,@body))
 
-
-;; (defmacro april/let (bindings &body body)
-;;   `(april (with (:state :in (,@bindings)))
-;;           ,@body))
-
-;; (defmacro april-f/let (bindings &body body)
-;;   `(april-f (with (:state :in (,@bindings)))
-;;             ,@body))
-
+(defmacro april-f/let (bindings &body body)
+  `(april-f (with (:state :in (,@bindings)))
+            ,@body))
