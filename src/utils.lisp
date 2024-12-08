@@ -10,7 +10,10 @@
    :aoc/read-matrix
    :april/x
    :april-f/x
-   :aoc/read-ints-ignoring-rest))
+   :aoc/read-ints-ignoring-rest
+   ;;   :april/let
+   ;; :april-f/let
+   ))
 
 (in-package :utils)
 
@@ -54,8 +57,7 @@
 (defun aoc/read-int-array (day mode)
   (let ((ints (aoc/split-and-read-ints (aoc/read-input-list day mode))))
     (make-array (list (length ints) (length (first ints)))
-                :initial-contents ints)
-    ))
+                :initial-contents ints)))
 
 (defun aoc/read-matrix (day mode)
   (let ((input (aoc/read-input-list day mode)))
@@ -79,4 +81,13 @@
           collecting
           (mapcar #'parse-integer (ppcre:all-matches-as-strings "\\d+" line)))))
 
+
+
+;; (defmacro april/let (bindings &body body)
+;;   `(april (with (:state :in (,@bindings)))
+;;           ,@body))
+
+;; (defmacro april-f/let (bindings &body body)
+;;   `(april-f (with (:state :in (,@bindings)))
+;;             ,@body))
 
