@@ -25,7 +25,7 @@
     input-path))
 
 (defun aoc/read-input (day mode)
-  (uiop:read-file-string (get-input-path day mode)))
+  (string-trim '(#\newline)  (uiop:read-file-string (get-input-path day mode))))
 
 (defun aoc/read-input-list (day mode)
   (uiop:read-file-lines (get-input-path day mode)))
