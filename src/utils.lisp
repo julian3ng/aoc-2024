@@ -8,6 +8,7 @@
    :aoc/read-int-list-of-lists
    :aoc/read-int-array
    :aoc/read-matrix
+   :aoc/read-int-matrix
    :april/x
    :april-f/x
    :aoc/read-ints-ignoring-rest
@@ -63,15 +64,21 @@
   (let ((input (aoc/read-input-list day mode)))
     (make-array (list (length input) (length (first input))) :initial-contents input)))
 
+(defun aoc/read-int-matrix (day mode)
+  (let ((input (aoc/read-input-list day mode)))
+    (make-array (list (length input) (length (first input))) :initial-contents
+                (loop for row in input collect
+                                           (loop for cell across row collect (digit-char-p cell))))))
+
 (defmacro april/x (input &body body)
   (let ((x (gensym)))
-    `(let ((,x ,input)) 
+    `(let ((,x ,input))
        (april (with (:state :in ((x ,x))))
               ,@body))))
 
 (defmacro april-f/x (input &body body)
   (let ((x (gensym)))
-    `(let ((,x ,input)) 
+    `(let ((,x ,input))
        (april-f (with (:state :in ((x ,x))))
                 ,@body))))
 
