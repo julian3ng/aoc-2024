@@ -14,6 +14,7 @@
    :aoc/read-ints-ignoring-rest
    :april/let
    :april-f/let
+   :aoc/read-int-list
    ))
 
 (in-package :utils)
@@ -68,7 +69,7 @@
   (let ((input (aoc/read-input-list day mode)))
     (make-array (list (length input) (length (first input))) :initial-contents
                 (loop for row in input collect
-                                           (loop for cell across row collect (digit-char-p cell))))))
+                                       (loop for cell across row collect (digit-char-p cell))))))
 
 (defmacro april/x (input &body body)
   (let ((x (gensym)))
@@ -95,3 +96,6 @@
 (defmacro april-f/let (bindings &body body)
   `(april-f (with (:state :in (,@bindings)))
             ,@body))
+
+(defun aoc/read-int-list (day mode)
+  (first (aoc/split-and-read-ints (aoc/read-input-list day mode))))

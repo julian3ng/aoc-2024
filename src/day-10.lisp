@@ -68,12 +68,12 @@
           (dfs start start)))
       nines)))
 
-(part-1 (aoc/read-int-matrix 10 :example)) ; => 36 (6 bits, #x24, #o44, #b100100)
-(part-1 (aoc/read-int-matrix 10 :real)) ; => 496 (9 bits, #x1F0)
+;; (part-1 (aoc/read-int-matrix 10 :example)) ; => 36 (6 bits, #x24, #o44, #b100100)
+;; (part-1 (aoc/read-int-matrix 10 :real)) ; => 496 (9 bits, #x1F0)
 
 (defun part-2 (input) input
   (let ((nines (find-nines-2 input)))
     (loop for v being the hash-values of nines sum v)))
 
-(part-2 (aoc/read-int-matrix 10 :example)) ; => 81 (7 bits, #x51, #o121, #b1010001)
-(part-2 (aoc/read-int-matrix 10 :real))  ; => 1120 (11 bits, #x460)
+;; (part-2 (aoc/read-int-matrix 10 :example)) ; => 81 (7 bits, #x51, #o121, #b1010001)
+;; (part-2 (aoc/read-int-matrix 10 :real))  ; => 1120 (11 bits, #x460)
