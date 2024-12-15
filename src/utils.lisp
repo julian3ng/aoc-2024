@@ -21,8 +21,7 @@
 
 (defun get-input-path (day mode)
   (let*
-      ((filename (cond ((eq mode :example) "example.txt")
-                       ((eq mode :real) "real.txt")))
+      ((filename (concatenate 'string (string-downcase (string mode)) ".txt"))
        (input-path (format nil "~~/common-lisp/aoc-2024/tests/input/day-~A/~A" day filename)))
     input-path))
 
@@ -87,7 +86,7 @@
   (let ((input (aoc/read-input-list day mode)))
     (loop for line in input
           collecting
-          (mapcar #'parse-integer (ppcre:all-matches-as-strings "\\d+" line)))))
+          (mapcar #'parse-integer (ppcre:all-matches-as-strings "-?\\d+" line)))))
 
 (defmacro april/let (bindings &body body)
   `(april (with (:state :in (,@bindings)))
