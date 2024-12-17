@@ -17,7 +17,8 @@
                (:file "src/day-12")
                (:file "src/day-13")
                (:file "src/day-14")
-               (:file "src/day-15"))
+               (:file "src/day-15")
+               (:file "src/day-16"))
   :in-order-to ((test-op (test-op "aoc-2024/tests"))))
 
 (defsystem "aoc-2024/tests"

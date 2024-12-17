@@ -41,8 +41,8 @@
 (defun part-1 (input time bounds)
   (score-quadrants (get-new-points input time bounds) bounds))
 
-(part-1 (aoc/read-ints-ignoring-rest 14 :example) 100 (list 7 11)) ; => 12 (4 bits, #xC, #o14, #b1100)
-(part-1 (aoc/read-ints-ignoring-rest 14 :real) 100 (list 103 101)) ; => 226548000 (28 bits, #xD80D920)
+;; (part-1 (aoc/read-ints-ignoring-rest 14 :example) 100 (list 7 11)) ; => 12 (4 bits, #xC, #o14, #b1100)
+;; (part-1 (aoc/read-ints-ignoring-rest 14 :real) 100 (list 103 101)) ; => 226548000 (28 bits, #xD80D920)
 
 
 (defun step-pos (pv time bound)
@@ -91,7 +91,7 @@
         (clear-counts)
         (step-input input 1 bounds)))))
 
-(part-2 (loop for (x y dx dy) in (aoc/read-ints-ignoring-rest 14 :real)
-              collect (list y x dy dx))
-        10000
-        '(103 101))
+;; (part-2 (loop for (x y dx dy) in (aoc/read-ints-ignoring-rest 14 :real)
+;;               collect (list y x dy dx))
+;;         10000
+;;         '(103 101))
