@@ -41,7 +41,9 @@
             (format t "~8A || ~8A | ~8A | ~8A || ~8A ~8A (~8A)" ip ra rb rc (opname op) arg (combo arg))
             (if (= op 5)
                 (format t " ==> ~A~%" (mod (combo arg) 8))
-                (format t "~%")))
+                (format t "~%"))
+            (when (= op 3)
+              (format t "================================~%")))
           (cond
             ;; adv
             ((= op 0) (setf ra (floor ra (expt 2 (combo arg)))))
@@ -62,9 +64,11 @@
           (incf ip 2))))
     (when cb (funcall cb ra rb rc instructions))))
 
+
+
 (defun print-instructions (instructions)
   (format t "~&")
-  (loop for i from 0 to (1- (length instructions)) 
+  (loop for i from 0 to (1- (length instructions))
         do
            (let ((thing (aref instructions i)))
              (if (zerop (mod i 2))
@@ -74,55 +78,35 @@
 
 (defun part-1 (ints)
   (destructuring-bind (a b c instructions) (parse-input ints)
+    (print-instructions instructions)
     (string-trim
      '(#\,)
      (coerce (loop for c across (with-output-to-string (s) (run-vm a b c instructions :stream s :logs t))
-                               collect c) 'string))))
+                   collect c) 'string))))
 
 ;; (part-1 (aoc/read-ints-ignoring-rest 17 :example)) ; => "4,6,3,5,6,3,5,2,1,0"
 ;; (part-1 (aoc/read-ints-ignoring-rest 17 :real)) ; => "7,3,0,5,7,1,4,0,5"
 
+(defun run-vm-with-a (a instructions &key (logs nil))
+  (coerce
+   (mapcar
+    #'digit-char-p
+    (remove-if
+     (lambda (c) (char= #\, c))
+     (loop for c across (with-output-to-string (s) (run-vm a 0 0 instructions :stream s :logs logs)) collect c)))
+   'vector))
+
+
+(defun find-valid (instructions)
+  (let* ((goals (loop for i from (1- (length instructions)) downto 0 collect (subseq instructions i)))
+         (currents (list 0)))
+    (loop for i from 0 to (1- (length goals)) do
+      (setf currents (loop for A* in currents nconc (loop for A from (* A* 8) to (+ (* A* 8) 7) when (equalp (elt goals i) (run-vm-with-a A instructions)) collect A))))
+    currents))
+
 
 (defun part-2 (ints)
-  (let ((s (part-1 ints)))
-    
-    ))
+  (let ((instructions (fourth (parse-input ints))))
+    (apply #'min (find-valid instructions))))
 
-#|
-digit 1 is 2,
-
-A = SOMETHING                                        ;
-B = (A % 8) ^ 1                         ;
-C = trunc(A / 2 ^ B)
-B = B ^ C
-A = A / 8
-B = B ^ 4
-PRINT B % 8
-
-A = SOMETHING
-((((A % 8) ^ 1) ^ trunc(A / (2^((A % 8) ^ 1)))) ^ 4) % 8
-A = A / 8
-
-|#
-
-(defun print-digit (A)
-  (print
-   (mod
-    (logxor
-     (logxor
-      (logxor (mod A 8) 1)
-      (floor A (expt 2 (logxor (mod A 8) 1))))
-     4)
-    8
-    )))
-
-(print-digit 28066687)
-(print-digit (floor 28066687 8))
-(print-digit (floor (floor 28066687 8) 8))
-(print-digit (floor (floor (floor 28066687 8) 8) 8))
-
-
-
-;; (loop for A = 28066687 do
-;;       (print-digit A)
-;;       (setf A (floor A 8)))
+;; (part-2 (aoc/read-ints-ignoring-rest 17 :real)) ; => 202972175280682 (48 bits, #xB89A24682A2A)

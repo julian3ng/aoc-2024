@@ -2,7 +2,8 @@
   :description "AOC 2024"
   :author "Julian Eng <julian3ng@protonmail.com>"
   :depends-on ("april" "cl-ppcre")
-  :components ((:file "src/utils")
+  :components ((:file "src/queue")
+               (:file "src/utils")
                (:file "src/day-1")
                (:file "src/day-2")
                (:file "src/day-3")
@@ -19,7 +20,9 @@
                (:file "src/day-14")
                (:file "src/day-15")
                (:file "src/day-16")
-               (:file "src/day-17"))
+               (:file "src/day-17")
+               (:file "src/day-18")
+               (:file "src/day-19"))
   :in-order-to ((test-op (test-op "aoc-2024/tests"))))
 
 (defsystem "aoc-2024/tests"
