@@ -35,6 +35,14 @@ KEYPAD2: <<vA>>^A<A>A<AAv>A^A
                                  '((nil #\^ #\A)
                                    (#\< #\v #\>))))
 
+
+(let ((paths (make-paths *numpad*)))
+  (loop for a across "A0123456789" do
+    (loop for b across "A0123456789" do
+      (let ((ab (coerce (list a b) 'string)))
+        (format t "~A ~A: ~A~%" a b (gethash ab paths))))
+    (format t "~%")))
+
 (defun make-paths (board)
   (declare (optimize (debug 3)))
   (let ((paths (make-hash-table :test 'equal)))
@@ -51,7 +59,9 @@ KEYPAD2: <<vA>>^A<A>A<AAv>A^A
                                        (<= 0 (first p) (1- my))
                                        (<= 0 (second p) (1- mx))
                                        (not (null (apply #'aref board p)))))
-                       (unvisited (p) (and (in-bounds p) (eq (apply #'aref move-to-get-here p) nil))))
+                       (unvisited (p) (and
+                                       (in-bounds p)
+                                       (eq (apply #'aref move-to-get-here p) nil))))
                 (set-move (list sy sx) #\.)
                 (enqueue q (list sy sx))
                 (loop until (emptyp q) do
@@ -75,7 +85,7 @@ KEYPAD2: <<vA>>^A<A>A<AAv>A^A
               ;;   (loop for y from 0 to (1- my) do
               ;;     (loop for x from 0 to (1- mx) do
               ;;       (format t "~A " (aref move-to-get-here y x)))
-              ;;     (format t "~%"))              
+              ;;     (format t "~%"))
               ;;   )
               (let ((sc (aref board sy sx)))
                 (loop for y from 0 to (1- my) do
@@ -115,10 +125,72 @@ KEYPAD2: <<vA>>^A<A>A<AAv>A^A
           (otherwise nil)))
       (coerce (nreverse s) 'string))))
 
+
+(defun make-numpad-paths ()
+  (let ((h (make-hash-table :test 'equal)))
+    (setf (gethash "A4" h) "^^<<A")
+    (setf (gethash "48" h) "^>A")
+    (setf (gethash "80" h) "vvvA")
+    (setf (gethash "0A" h) ">A")
+
+    (setf (gethash "A6" h) "^^A")
+    (setf (gethash "68" h) "<^A")
+    (setf (gethash "82" h) "vvA")
+    (setf (gethash "2A" h) "v>A")
+
+    (setf (gethash "A1" h) "^<<A")
+    (setf (gethash "14" h) "^A")
+    (setf (gethash "40" h) ">vvA")
+
+    (setf (gethash "A2" h) "<^A")
+    (setf (gethash "24" h) "<^A")
+    (setf (gethash "46" h) ">>A")
+    (setf (gethash "6A" h) "vvA")
+
+    (setf (gethash "A9" h) "^^^A")
+    (setf (gethash "93" h) "vvA")
+    (setf (gethash "38" h) "<^^A")
+    (setf (gethash "8A" h) "vvv>A")
+    h))
+
+(defun make-dpad-paths ()
+  (let ((h (make-hash-table :test 'equal)))
+    (setf (gethash "AA" h) "A"
+          (gethash "A<" h) "v<<A"
+          (gethash "Av" h) "<vA"
+          (gethash "A^" h) "<A"
+          (gethash "A>" h) "vA"
+
+          (gethash "<A" h) ">>^A"
+          (gethash "<<" h) "A"
+          (gethash "<v" h) ">A"
+          (gethash "<^" h) ">^A"
+          (gethash "<>" h) ">>A"
+
+          (gethash "vA" h) "^>A"
+          (gethash "v<" h) "<A"
+          (gethash "vv" h) "A"
+          (gethash "v^" h) "^A"          
+          (gethash "v>" h) ">A"
+
+          (gethash "^A" h) ">A"
+          (gethash "^<" h) "v<A"
+          (gethash "^v" h) "vA"
+          (gethash "^^" h) "A"          
+          (gethash "^>" h) "v>A"
+
+          (gethash ">A" h) "^A"
+          (gethash "><" h) "<<A"
+          (gethash ">v" h) "<A"
+          (gethash ">^" h) "<^A"          
+          (gethash ">>" h) "A")
+    h))
+
+
 (defun part-1 (input)
-  (let ((numpad-paths (make-paths *numpad*))
-        (dpad-paths (make-paths *dpad*)))
-    (loop for line in input sum 
+  (let ((numpad-paths (make-numpad-paths))
+        (dpad-paths (make-dpad-paths)))
+    (loop for line in input sum
                             (let* ((line-with-a (concatenate 'string "A" line))
                                    (s-groups  (expand-path line-with-a numpad-paths ))
                                    (s  (apply #'concatenate 'string "A" s-groups))
@@ -143,4 +215,19 @@ KEYPAD2: <<vA>>^A<A>A<AAv>A^A
 (part-1 (aoc/read-input-list 21 :example))
 (part-1 (aoc/read-input-list 21 :real))
 
-(defun part-2 (input))
+(defun part-2 (input)
+  (let ((numpad-paths (make-numpad-paths))
+        (dpad-paths (make-dpad-paths)))
+    (loop for line in input
+          sum
+          (let ((cur-line (expand-path (concatenate 'string "A" line) numpad-paths)))
+            (loop repeat 3 do
+              (setf cur-line (expand-path (apply #'concatenate 'string "A" cur-line) numpad-paths)))
+            
+            (* (parse-integer line :junk-allowed t)
+               (1- (length cur-line)))))))
+
+(part-2 (aoc/read-input-list 21 :real))
+
+
+
