@@ -35,14 +35,6 @@ KEYPAD2: <<vA>>^A<A>A<AAv>A^A
                                  '((nil #\^ #\A)
                                    (#\< #\v #\>))))
 
-
-(let ((paths (make-paths *numpad*)))
-  (loop for a across "A0123456789" do
-    (loop for b across "A0123456789" do
-      (let ((ab (coerce (list a b) 'string)))
-        (format t "~A ~A: ~A~%" a b (gethash ab paths))))
-    (format t "~%")))
-
 (defun make-paths (board)
   (declare (optimize (debug 3)))
   (let ((paths (make-hash-table :test 'equal)))
@@ -212,8 +204,8 @@ KEYPAD2: <<vA>>^A<A>A<AAv>A^A
                               (* (parse-integer (subseq line-with-a 1) :junk-allowed t)
                                  (1- (length sss)))))))
 
-(part-1 (aoc/read-input-list 21 :example))
-(part-1 (aoc/read-input-list 21 :real))
+;; (part-1 (aoc/read-input-list 21 :example))
+;; (part-1 (aoc/read-input-list 21 :real))
 
 (defun part-2 (input)
   (let ((numpad-paths (make-numpad-paths))
@@ -227,7 +219,7 @@ KEYPAD2: <<vA>>^A<A>A<AAv>A^A
             (* (parse-integer line :junk-allowed t)
                (1- (length cur-line)))))))
 
-(part-2 (aoc/read-input-list 21 :real))
+;; (part-2 (aoc/read-input-list 21 :real))
 
 
 
