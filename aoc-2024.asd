@@ -26,8 +26,9 @@
                (:file "src/day-21" :depends-on ("src/utils" "src/queue"))
                (:file "src/day-22" :depends-on ("src/utils"))
                (:file "src/day-23" :depends-on ("src/utils"))
+               (:file "src/day-24" :depends-on ("src/utils"))
                (:file "src/queue")
-               (:file "src/utils")               )
+               (:file "src/utils"))
   :in-order-to ((test-op (test-op "aoc-2024/tests"))))
 
 (defsystem "aoc-2024/tests"
