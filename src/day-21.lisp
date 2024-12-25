@@ -3,26 +3,6 @@
 
 (in-package :day-21)
 
-#|
-
-789
-456
-123
- 0A
-
-NUMPAD:  029A
-transitions: A0 02 29 9A
-A0 = <A
-02 = ^A
-29 = ^^>A
-9A = vvA
-
-KEYPAD1: <A^A^^>AvvA
-KEYPAD2: <<vA>>^A<A>A<AAv>A^A
-
-
-|#
-
 (defparameter *numpad* (make-array '(4 3)
                                    :initial-contents
                                    '((#\7 #\8 #\9)
@@ -34,65 +14,6 @@ KEYPAD2: <<vA>>^A<A>A<AAv>A^A
                                  :initial-contents
                                  '((nil #\^ #\A)
                                    (#\< #\v #\>))))
-
-;; (defun make-paths (board)
-;;   (declare (optimize (debug 3)))
-;;   (let ((paths (make-hash-table :test 'equal)))
-;;     (destructuring-bind (my mx) (array-dimensions board)
-;;       (loop for sy from 0 to (1- my) do
-;;         (loop for sx from 0 to (1- mx) do
-;;           (unless (null (aref board sy sx))
-;;             (let ((q (make-instance 'queue))
-;;                   (move-to-get-here (make-array (list my mx) :initial-element nil))
-;;                   (prev (make-array (list my mx) :initial-element nil)))
-;;               (labels ((set-move (p move) (setf (apply #'aref move-to-get-here p) move))
-;;                        (set-prev (p pp) (setf (apply #'aref prev p) pp))
-;;                        (in-bounds (p) (and
-;;                                        (<= 0 (first p) (1- my))
-;;                                        (<= 0 (second p) (1- mx))
-;;                                        (not (null (apply #'aref board p)))))
-;;                        (unvisited (p) (and
-;;                                        (in-bounds p)
-;;                                        (eq (apply #'aref move-to-get-here p) nil))))
-;;                 (set-move (list sy sx) #\.)
-;;                 (enqueue q (list sy sx))
-;;                 (loop until (emptyp q) do
-;;                   (let ((cur (dequeue q)))
-;;                     (destructuring-bind (y x) cur
-;;                       (loop for dy in '(-1 0 1 0)
-;;                             and dx in '(0 1 0 -1)
-;;                             and move across "^>v<"
-;;                             when (and dy dx)
-;;                               do
-;;                                  (let ((neighbor (list (+ y dy) (+ x dx))))
-;;                                    (when (unvisited neighbor)
-;;                                      (set-move neighbor move)
-;;                                      (set-prev neighbor cur )
-;;                                      (enqueue q neighbor))))))))
-;;               ;; (when (equal (list sy sx) '(3 2))
-;;               ;;   (loop for y from 0 to (1- my) do
-;;               ;;     (loop for x from 0 to (1- mx) do
-;;               ;;       (format t "~A " (aref prev y x)))
-;;               ;;     (format t "~%"))
-;;               ;;   (loop for y from 0 to (1- my) do
-;;               ;;     (loop for x from 0 to (1- mx) do
-;;               ;;       (format t "~A " (aref move-to-get-here y x)))
-;;               ;;     (format t "~%"))
-;;               ;;   )
-;;               (let ((sc (aref board sy sx)))
-;;                 (loop for y from 0 to (1- my) do
-;;                   (loop for x from 0 to (1- mx) do
-;;                     (let ((c (aref board y x)))
-;;                       (unless (or (null c) (null sc))
-;;                         (let ((cur (list y x))
-;;                               (s (list #\A)))
-;;                           (loop until (null (apply #'aref prev cur)) do
-;;                             (push (apply #'aref move-to-get-here cur) s)
-;;                             (setf cur (apply #'aref prev cur)))
-;;                           (setf (gethash (coerce (list sc c) 'string) paths)
-;;                                 (coerce s 'string)))))))))))))
-;;     (setf (gethash "<A" paths) ">>^A") ;; special case I can't convince BFS of...
-;;     paths))
 
 (defun expand-path (path paths)
   (loop for i from 0 to (- (length path) 2) collect (gethash (subseq path i (+ i 2)) paths)))
@@ -194,21 +115,33 @@ KEYPAD2: <<vA>>^A<A>A<AAv>A^A
 
 ;; (part-1 (aoc/read-input-list 21 :real)) ; => 176452 (18 bits, #x2B144)
 
-(defun part-2 (input)
+(defun seq-length (moves layers)
   (let ((numpad-paths (make-numpad-paths))
         (dpad-paths (make-dpad-paths))
-        (memo (make-hash-table :test 'equal)) ;; cache lengths of moves?
+        (memo (make-hash-table :test 'equalp)))
+    (labels ((dp (key)
+               (let ((maybe (gethash key memo)))
+                 (if maybe
+                     maybe
+                     (destructuring-bind (moves cur-layer) key
+                       (let ((moves-plus-a (concatenate 'string "A" moves)))
+                         (cond
+                           ((zerop cur-layer) (setf (gethash key memo) (loop for i from 0 to (- (length moves-plus-a) 2)
+                                                                             sum (dp (list (apply #'concatenate 'string (expand-path (subseq moves-plus-a i (+ i 2)) numpad-paths))
+                                                                                           (1+ cur-layer))))))
+                           ((>= cur-layer layers) (setf (gethash key memo) (length moves)))
+                           (t (setf (gethash key memo) (loop for i from 0 to (- (length moves-plus-a) 2)
+                                                             sum (dp (list (apply #'concatenate 'string (expand-path (subseq moves-plus-a i (+ i 2)) dpad-paths))
+                                                                           (1+ cur-layer))))))))
+                       (gethash key memo))))))
 
-        )
-    (loop for line in input sum
-          (let ((groups (expand-path (concatenate 'string "A" line) numpad-paths)))
-            (loop repeat 1 do
-              (setf groups
-                    (expand-path (apply #'concatenate 'string "A" groups) dpad-paths)))
-            ;; (print (apply #'concatenate 'string cur-line))
-            (* (parse-integer line :junk-allowed t)
-               (length (apply #'concatenate 'string groups)))
-            ))))
+      (dp (list moves 0)))))
 
-;; (part-2 (aoc/read-input-list 21 :real))
+(defun score (input)
+  (*  (parse-integer input :junk-allowed t) (seq-length input 26)))
+
+(defun part-2 (input)
+  (loop for line in input sum (score line )))
+
+(part-2 (aoc/read-input-list 21 :real)) ; => 218309335714068 (48 bits, #xC68D1A680914)
 
