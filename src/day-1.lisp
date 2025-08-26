@@ -22,3 +22,5 @@
            ;;   - Enclose both, then find where column 2 = column 1. Massage
            ;;   - shape back into matrix.
            "+/((1⌷⍉)×(+/∘↑((1⌷⍉)((⊃=)⍥⊂)(⊂2⌷⍉))))x"))
+
+
